@@ -3,8 +3,8 @@ include Irvine32.inc
 .data
 key byte -2,4,1,0,-3,5,2,-4,-4,6
 nkey byte 10 dup(?)
-str1 byte "START:",0				;debug
-str2 byte ":END",0					;debug
+str1 byte "START:",0			;debug
+str2 byte ":END",0			;debug
 myArray byte "It's been a long time. How have you been?",0
 myArray1 byte "I've been really busy being dead. You know, after you MURDERED ME.",0
 keycng PROTO
@@ -13,7 +13,7 @@ encypt PROTO, input_t:DWORD, lengt:DWORD
 
 .code
 main proc
-	invoke keycng												;to convert the rotation always on the right
+	invoke keycng								;to convert the rotation always on the right
 	
 	invoke show_msg, ADDR myArray
 	invoke encypt, ADDR myArray, (lengthof myArray)-2			;set the amount of myArray
@@ -46,11 +46,11 @@ l5:							;divide by 10, get the remainder
 	mov dx,0
 	movzx ax,[key+esi]
 	mov cx,10
-	div cx					;remainder in 16bit stored in dl
-;	movzx eax,dx			;debug:display key
+	div cx						;remainder in 16bit stored in dl
+;	movzx eax,dx					;debug:display key
 	mov nkey[esi],dl
-;	call writeint			;debug:display key
-;	call crlf				;debug:display key
+;	call writeint					;debug:display key
+;	call crlf					;debug:display key
 	inc esi
 	cmp esi,10
 	jne l5
@@ -70,25 +70,25 @@ t1:							;debug:display new key
 keycng endp
 
 encypt PROC, input_t:DWORD, lengt:DWORD
-	mov ebx, 0						;init
-	mov ecx, 0						;init
-	mov esi, 0						;init
-	mov edi, 0						;init
+	mov ebx, 0					;init
+	mov ecx, 0					;init
+	mov esi, 0					;init
+	mov edi, 0					;init
 
 enc:
 	mov cl, nkey[esi]				;get key
 	mov eax, input_t				;load length of the plaintext into EAX
 	mov al, [eax+edi]				;get the value from input_t as it's an ADDR
-	ror al, cl						;rotate text right the amount of the key 
+	ror al, cl					;rotate text right the amount of the key 
 	call writechar					;show the result of encryption
 	cmp edi, lengt					;check if the index pointer EDI reaches the length of plaintext
-	je ex_enc						;jump out if it reaches
-	inc edi							;add index pointer
-	inc esi							;add key pointer
-	cmp esi,9                       ;check key pointer ESI gets limitation
-	jne enc							;continue if it gets the end of the key 
-	mov esi,0						;initial key pointer ESI
-	jmp enc							;esi reaches 10, need to be init
+	je ex_enc					;jump out if it reaches
+	inc edi						;add index pointer
+	inc esi						;add key pointer
+	cmp esi,9                       		;check key pointer ESI gets limitation
+	jne enc						;continue if it gets the end of the key 
+	mov esi,0					;initial key pointer ESI
+	jmp enc						;esi reaches 10, need to be init
 
 ex_enc:
 	call crlf
